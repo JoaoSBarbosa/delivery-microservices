@@ -1,0 +1,35 @@
+services:
+  postgres-courier:
+    image: postgres:16-alpine
+    container_name: postgres-courier
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: courier-db
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: "@KeyDev"
+    ports:
+      - "5485:5432"
+    volumes:
+      - postgres_courier_data:/var/lib/postgresql/data
+    networks:
+      - delivery-network
+  postgres-delivery-tracking:
+    image: postgres:16-alpine
+    container_name: postgres-delivery-tracking
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tracking-db
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: "@KeyDev"
+    ports:
+      - "5486:5432"
+    volumes:
+      - postgres_delivery_tracking_data:/var/lib/postgresql/data
+    networks:
+      - delivery-network
+volumes:
+  postgres_courier_data:
+  postgres_delivery_tracking_data:
+networks:
+  delivery-network:
+    driver: bridge
