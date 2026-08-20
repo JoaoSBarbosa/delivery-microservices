@@ -27,9 +27,24 @@ services:
       - postgres_delivery_tracking_data:/var/lib/postgresql/data
     networks:
       - delivery-network
+  pgadmin:
+    image: dpage/pgadmin4:9.5
+    depends_on:
+      - postgres-courier
+      - postgres-delivery-tracking
+    environment:
+      PGADMIN_DEFAULT_EMAIL: contato@delivery.com
+      PGADMIN_DEFAULT_PASSWORD: barbosacode
+    ports:
+      - 8083:80
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - delivery-network
 volumes:
   postgres_courier_data:
   postgres_delivery_tracking_data:
+  pgadmin-data:
 networks:
   delivery-network:
     driver: bridge
