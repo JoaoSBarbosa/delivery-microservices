@@ -1,24 +1,160 @@
-# Compiled class file
-*.class
+# ============================================================
+# Java
+# ============================================================
 
-# Log file
+*.class
 *.log
 
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+# JVM crash logs
 hs_err_pid*
 replay_pid*
+
+# Build output
+target/
+build/
+out/
+
+# Package files
+*.jar
+*.war
+*.ear
+*.nar
+
+# ============================================================
+# Maven
+# ============================================================
+
+# Maven wrapper files should NOT be ignored
+# mvnw
+# mvnw.cmd
+# .mvn/
+
+# ============================================================
+# Gradle
+# ============================================================
+
+.gradle/
+
+# Gradle wrapper files should NOT be ignored
+# gradlew
+# gradlew.bat
+# gradle/wrapper/
+
+# ============================================================
+# IntelliJ IDEA
+# ============================================================
+
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# ============================================================
+# Eclipse
+# ============================================================
+
+.classpath
+.project
+.settings/
+.factorypath
+.springBeans
+.apt_generated/
+.apt_generated_tests/
+
+# ============================================================
+# VS Code
+# ============================================================
+
+.vscode/
+
+# ============================================================
+# NetBeans
+# ============================================================
+
+/nbproject/private/
+/nbbuild/
+/dist/
+/.nb-gradle/
+
+# ============================================================
+# BlueJ / J2ME
+# ============================================================
+
+*.ctxt
+.mtj.tmp/
+
+# ============================================================
+# Temporary files
+# ============================================================
+
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.#*
+
+# ============================================================
+# OS generated files
+# ============================================================
+
+.DS_Store
+.AppleDouble
+.LSOverride
+
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+
+.directory
+
+# ============================================================
+# Archives
+# ============================================================
+
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+# ============================================================
+# Environment variables
+# ============================================================
+
+.env
+.env.*
+!.env.example
+
+# ============================================================
+# Spring Boot environment configuration
+# ============================================================
+
+# Local
+application-local.yml
+application-local.yaml
+application-local.properties
+
+# Development
+application-dev.yml
+application-dev.yaml
+application-dev.properties
+
+# Homologation
+application-homolog.yml
+application-homolog.yaml
+application-homolog.properties
+
+# Production
+application-prod.yml
+application-prod.yaml
+application-prod.properties
+
+# ============================================================
+# Test / Coverage
+# ============================================================
+
+coverage/
+jacoco/
+*.exec
