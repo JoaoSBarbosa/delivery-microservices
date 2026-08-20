@@ -118,6 +118,9 @@ A arquitetura do projeto será organizada em múltiplos microsserviços, buscand
 ```
 
 ---
+## Diagrama de Modelagem
+
+![Diagrama de Modelagem do Projeto Delivery](docs/diagrams/diagrama_modelagem_problema_projeto_delivery.jpg)
 
 ## Microsserviços
 
