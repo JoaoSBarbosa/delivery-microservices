@@ -3,10 +3,12 @@ package com.barbosacode.delivery.msdelivery.tracking.domain.valueObject;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 
 import java.util.Objects;
 
+@Builder
 @Embeddable
 @EqualsAndHashCode
 public class ContactPoint {

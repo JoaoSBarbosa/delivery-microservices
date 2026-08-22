@@ -6,7 +6,9 @@ import com.barbosacode.delivery.msdelivery.tracking.domain.valueObject.ContactPo
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Delivery {
 
@@ -41,4 +44,18 @@ public class Delivery {
     private ContactPoint sender;
     private ContactPoint recipient;
     private List<Item> items = new ArrayList<>();
+
+    public static Delivery draft() {
+        Delivery delivery = new Delivery();
+
+        delivery.id = UUID.randomUUID();
+        delivery.status = DeliveryStatus.DRAFT;
+        delivery.distanceFee = BigDecimal.ZERO;
+        delivery.courierPayout = BigDecimal.ZERO;
+        delivery.totalCost = BigDecimal.ZERO;
+        delivery.totalItems = 0;
+        delivery.items = new ArrayList<>();
+
+        return delivery;
+    }
 }
