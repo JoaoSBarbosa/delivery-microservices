@@ -1,6 +1,8 @@
 package com.barbosacode.delivery.msdelivery.tracking.domain.model;
 
 import com.barbosacode.delivery.msdelivery.tracking.domain.enums.DeliveryStatus;
+import com.barbosacode.delivery.msdelivery.tracking.domain.exceptions.DomainException;
+import com.barbosacode.delivery.msdelivery.tracking.domain.operations.PreparationDetails;
 import com.barbosacode.delivery.msdelivery.tracking.domain.valueObject.ContactPoint;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -84,6 +86,57 @@ public class Delivery {
         Item item = getItems().stream().filter(i -> i.getId().equals(itemId)).findFirst().orElseThrow();
         item.setQuantity(quantity);
         calculateToTotalItems();
+    }
+
+    public void editPreparationDetails(PreparationDetails details) {
+        verifyCanEdit();
+
+
+        setSender(details.getSender());
+        setRecipient(details.getRecipient());
+        setCourierPayout(details.getCourierPayout());
+        setDistanceFee(details.getDistanceFee());
+        setExpectedDeliveryAt(OffsetDateTime.now().plus(details.getExpectedDeliveryTime()));
+        setTotalCost(this.getDistanceFee().add(this.getCourierPayout()));
+    }
+
+    public void place() {
+        verifyCanBePlaced();
+        this.setStatus(DeliveryStatus.WAITING_FOR_COURIER);
+        this.setPlacedAt(OffsetDateTime.now());
+    }
+
+    public void pickUp(UUID courierId) {
+        this.setStatus(DeliveryStatus.IN_TRANSIT);
+        this.setCourierId(courierId);
+        this.setAssignedAt(OffsetDateTime.now());
+    }
+
+    public void markAsDelivery() {
+        this.setStatus(DeliveryStatus.DELIVERED);
+        this.setFulfilledAt(OffsetDateTime.now());
+    }
+
+    private void verifyCanBePlaced() {
+
+        if (!isReadyForPlacement())
+            throw new DomainException("A entrega não pode ser solicitada, pois os dados obrigatórios não foram preenchidos.");
+
+        if (!getStatus().equals(DeliveryStatus.DRAFT))
+            throw new DomainException("A entrega só pode ser solicitada quando estiver em rascunho.");
+
+    }
+
+    private void verifyCanEdit() {
+        if (!getStatus().equals(DeliveryStatus.DRAFT))
+            throw new DomainException("A entrega só pode ter seus dados alterados enquanto estiver em rascunho.");
+
+    }
+
+    private boolean isReadyForPlacement() {
+        return this.getSender() != null
+                && this.getRecipient() != null
+                && this.getTotalCost() != null;
     }
 
     private void calculateToTotalItems() {
