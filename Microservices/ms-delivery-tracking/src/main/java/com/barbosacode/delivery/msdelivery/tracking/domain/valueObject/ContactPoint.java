@@ -5,9 +5,11 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 import java.util.Objects;
 
+@Getter
 @Builder
 @Embeddable
 @EqualsAndHashCode

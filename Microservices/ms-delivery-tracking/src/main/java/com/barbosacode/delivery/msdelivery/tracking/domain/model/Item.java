@@ -1,11 +1,11 @@
 package com.barbosacode.delivery.msdelivery.tracking.domain.model;
 
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
+@Getter
+@Setter(AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Item {
@@ -19,9 +19,9 @@ public class Item {
     static Item BrandNew(String name, Integer quantity) {
         Item item = new Item();
 
-        item.id = UUID.randomUUID();
-        item.name = name;
-        item.quantity = quantity;
+        item.setId(UUID.randomUUID());
+        item.setName(name);
+        item.setQuantity(quantity);
         return item;
     }
 }
