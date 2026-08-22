@@ -1,6 +1,5 @@
 package com.barbosacode.delivery.msdelivery.tracking.domain.model;
 
-
 import com.barbosacode.delivery.msdelivery.tracking.domain.enums.DeliveryStatus;
 import com.barbosacode.delivery.msdelivery.tracking.domain.valueObject.ContactPoint;
 import jakarta.persistence.EnumType;
@@ -55,6 +54,41 @@ public class Delivery {
 
     public List<Item> getItems() {
         return Collections.unmodifiableList(this.items);
+    }
+
+
+    public UUID addItem(String name, int quantity) {
+        return addItem(name, quantity, null);
+    }
+
+    public UUID addItem(String name, int quantity, String description) {
+        Item item = Item.brandNew(name, quantity, description);
+        items.add(item);
+        calculateToTotalItems();
+
+        return item.getId();
+    }
+
+    public void removeItem(UUID itemId) {
+        items.removeIf(item -> item.getId().equals(itemId));
+        calculateToTotalItems();
+
+    }
+
+    public void clearItems() {
+        items.clear();
+        calculateToTotalItems();
+    }
+
+    public void changeItemQuantity(UUID itemId, int quantity) {
+        Item item = getItems().stream().filter(i -> i.getId().equals(itemId)).findFirst().orElseThrow();
+        item.setQuantity(quantity);
+        calculateToTotalItems();
+    }
+
+    private void calculateToTotalItems() {
+        int totalItems = getItems().stream().mapToInt(Item::getQuantity).sum();
+        setTotalItems(totalItems);
     }
 
 }

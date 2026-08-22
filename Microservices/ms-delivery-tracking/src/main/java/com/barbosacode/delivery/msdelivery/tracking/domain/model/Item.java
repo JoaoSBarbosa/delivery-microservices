@@ -14,14 +14,20 @@ public class Item {
     private UUID id;
     private String description;
     private String name;
+    @Setter(AccessLevel.PACKAGE)
     private Integer quantity;
 
-    static Item BrandNew(String name, Integer quantity) {
+    static Item brandNew(String name, Integer quantity) {
+        return brandNew(name, quantity, null);
+    }
+
+    static Item brandNew(String name, Integer quantity, String description) {
         Item item = new Item();
 
         item.setId(UUID.randomUUID());
         item.setName(name);
         item.setQuantity(quantity);
+        item.setDescription(description);
         return item;
     }
 }
