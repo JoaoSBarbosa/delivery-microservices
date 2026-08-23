@@ -89,8 +89,7 @@ public class Delivery {
     }
 
     public void editPreparationDetails(PreparationDetails details) {
-        verifyCanEdit();
-
+        verifyIsDraft();
 
         setSender(details.getSender());
         setRecipient(details.getRecipient());
@@ -119,18 +118,16 @@ public class Delivery {
 
     private void verifyCanBePlaced() {
 
+        verifyIsDraft();
         if (!isReadyForPlacement())
-            throw new DomainException("A entrega não pode ser solicitada, pois os dados obrigatórios não foram preenchidos.");
+            throw new DomainException("A entrega não pode ser solicitada. Remetente, destinatário ou custo total não informado.");
 
-        if (!getStatus().equals(DeliveryStatus.DRAFT))
-            throw new DomainException("A entrega só pode ser solicitada quando estiver em rascunho.");
 
     }
 
-    private void verifyCanEdit() {
-        if (!getStatus().equals(DeliveryStatus.DRAFT))
-            throw new DomainException("A entrega só pode ter seus dados alterados enquanto estiver em rascunho.");
 
+    private void verifyCanEdit() {
+        verifyIsDraft();
     }
 
     private boolean isReadyForPlacement() {
@@ -142,6 +139,11 @@ public class Delivery {
     private void calculateToTotalItems() {
         int totalItems = getItems().stream().mapToInt(Item::getQuantity).sum();
         setTotalItems(totalItems);
+    }
+
+    private void verifyIsDraft() {
+        if (!DeliveryStatus.DRAFT.equals(getStatus()))
+            throw new DomainException("A entrega deve estar em rascunho para realizar esta operação.");
     }
 
 }
