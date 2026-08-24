@@ -1,6 +1,7 @@
 package com.barbosacode.delivery.msdelivery.tracking.domain.model;
 
 import com.barbosacode.delivery.msdelivery.tracking.domain.enums.DeliveryStatus;
+import com.barbosacode.delivery.msdelivery.tracking.domain.exceptions.DomainException;
 import com.barbosacode.delivery.msdelivery.tracking.domain.operations.PreparationDetails;
 import com.barbosacode.delivery.msdelivery.tracking.domain.valueObject.ContactPoint;
 import com.barbosacode.delivery.msdelivery.tracking.domain.valueObject.PhoneNumber;
@@ -55,5 +56,14 @@ public class DeliveryTest {
                 () -> assertEquals(DeliveryStatus.WAITING_FOR_COURIER, delivery.getStatus()),
                 () -> assertNotNull(delivery.getPlacedAt())
         );
+    }
+
+    @Test
+    @DisplayName("Deve lançar DomainException ao tentar colocar a entrega sem detalhes de preparação")
+    public void shouldNotPlaceDeliveryWithoutPreparationDetails() {
+        Delivery deliver = Delivery.draft();
+        
+        DomainException exception = assertThrows(DomainException.class, deliver::place);
+        assertEquals("A entrega não pode ser solicitada. Remetente, destinatário ou custo total não informado.", exception.getMessage());
     }
 }
