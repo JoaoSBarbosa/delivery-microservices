@@ -101,19 +101,27 @@ public class Delivery {
 
     public void place() {
         verifyCanBePlaced();
-        this.setStatus(DeliveryStatus.WAITING_FOR_COURIER);
+        changeStatusTo(DeliveryStatus.WAITING_FOR_COURIER);
         this.setPlacedAt(OffsetDateTime.now());
     }
 
     public void pickUp(UUID courierId) {
-        this.setStatus(DeliveryStatus.IN_TRANSIT);
+        changeStatusTo(DeliveryStatus.IN_TRANSIT);
         this.setCourierId(courierId);
         this.setAssignedAt(OffsetDateTime.now());
     }
 
     public void markAsDelivery() {
-        this.setStatus(DeliveryStatus.DELIVERED);
+        changeStatusTo(DeliveryStatus.DELIVERED);
         this.setFulfilledAt(OffsetDateTime.now());
+    }
+
+    private void changeStatusTo(DeliveryStatus newStatus) {
+        if (newStatus == null) throw new DomainException("O novo status da entrega não pode ser nulo.");
+        if (this.getStatus().canNotChangeTo(newStatus))
+            throw new DomainException("Transição de status inválida: de " + this.getStatus() + " para " + newStatus);
+
+        this.setStatus(newStatus);
     }
 
     private void verifyCanBePlaced() {
