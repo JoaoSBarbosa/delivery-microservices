@@ -1,11 +1,8 @@
 package com.barbosacode.delivery.msdelivery.tracking.domain.valueObject;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.Objects;
 
@@ -13,30 +10,21 @@ import java.util.Objects;
 @Builder
 @Embeddable
 @EqualsAndHashCode
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ContactPoint {
 
-    @Column(name = "zip_code")
     private String zipCode;
-    @Column(name = "street_address")
     private String streetAddress;
-    @Column(name = "street_number")
     private String streetNumber;
-    @Column(name = "city")
     private String city;
-    @Column(name = "state")
     private String state;
-    @Column(name = "country")
     private String country;
-    @Column(name = "complement")
     private String complement;
-    @Column(name = "name")
     private String name;
 
     @Embedded
     private PhoneNumber phoneNumber;
 
-    protected ContactPoint() {
-    }
 
     public ContactPoint(
             String zipCode,
