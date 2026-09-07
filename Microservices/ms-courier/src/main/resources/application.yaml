@@ -1,3 +1,6 @@
 spring:
   application:
     name: ms-courier
+
+  profiles:
+    active: dev

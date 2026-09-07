@@ -2,7 +2,7 @@ package com.barbosacode.delivery.mscourier.domain.model;
 
 
 import com.barbosacode.delivery.mscourier.domain.valueObject.PhoneNumber;
-import jakarta.persistence.Embedded;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.OffsetDateTime;
@@ -11,12 +11,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+@Entity
 @Getter
+@Table(name = "courier")
 @Setter(AccessLevel.PRIVATE)
-@NoArgsConstructor(access = AccessLevel.PACKAGE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Courier {
 
+    @Id
     @EqualsAndHashCode.Include
     private UUID id;
     @Setter(AccessLevel.PUBLIC)
@@ -25,10 +28,14 @@ public class Courier {
     @Setter(AccessLevel.PUBLIC)
     private PhoneNumber phoneNumber;
 
+    @Column(name = "full_filled_deliveries_quantity")
     private Integer fullFilledDeliveriesQuantity;
+    @Column(name = "pending_deliveries_quantity")
     private Integer pendingDeliveriesQuantity;
+    @Column(name = "last_full_filled_delivery_at")
     private OffsetDateTime lastFullFilledDeliveryAt;
 
+    @OneToMany(mappedBy = "courier", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AssignedDelivery> pendingDeliveries = new ArrayList<>();
 
     public List<AssignedDelivery> getPendingDeliveries() {
@@ -47,7 +54,7 @@ public class Courier {
     }
 
     public void assign(UUID deliveryId) {
-        this.pendingDeliveries.add(AssignedDelivery.pending(deliveryId));
+        this.pendingDeliveries.add(AssignedDelivery.pending(deliveryId, this));
         setPendingDeliveriesQuantity(this.pendingDeliveries.size());
     }
 
