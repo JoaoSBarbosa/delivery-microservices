@@ -1,4 +1,4 @@
-package com.barbosacode.delivery.msdelivery.tracking.domain.repository;
+package com.barbosacode.delivery.msdelivery.tracking.repository;
 
 import com.barbosacode.delivery.msdelivery.tracking.domain.model.Delivery;
 import org.springframework.data.jpa.repository.JpaRepository;

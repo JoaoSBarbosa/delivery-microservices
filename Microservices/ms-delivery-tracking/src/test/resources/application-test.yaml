@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: ms-delivery-tracking
+
+
+  datasource:
+    url: jdbc:postgresql://localhost:5488/tracking-test-db
+    username: root
+    password: "@KeyDev"
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+  flyway:
+    enabled: false

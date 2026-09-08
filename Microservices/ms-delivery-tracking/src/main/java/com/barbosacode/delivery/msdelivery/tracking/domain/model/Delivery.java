@@ -2,8 +2,8 @@ package com.barbosacode.delivery.msdelivery.tracking.domain.model;
 
 import com.barbosacode.delivery.msdelivery.tracking.domain.enums.DeliveryStatus;
 import com.barbosacode.delivery.msdelivery.tracking.domain.exceptions.DomainException;
-import com.barbosacode.delivery.msdelivery.tracking.domain.operations.PreparationDetails;
 import com.barbosacode.delivery.msdelivery.tracking.domain.valueObject.ContactPoint;
+import com.barbosacode.delivery.msdelivery.tracking.domain.valueObject.PreparationDetails;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -13,6 +13,22 @@ services:
       - postgres_courier_data:/var/lib/postgresql/data
     networks:
       - delivery-network
+
+  postgres-courier-test:
+    image: postgres:16-alpine
+    container_name: postgres-courier-test
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: courier-db-test
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: "@KeyDev"
+    ports:
+      - "5487:5432"
+    volumes:
+      - postgres_courier_data_test:/var/lib/postgresql/data
+    networks:
+      - delivery-network
+
   postgres-delivery-tracking:
     image: postgres:16-alpine
     container_name: postgres-delivery-tracking
@@ -27,11 +43,28 @@ services:
       - postgres_delivery_tracking_data:/var/lib/postgresql/data
     networks:
       - delivery-network
+
+  postgres-delivery-tracking-test:
+    image: postgres:16-alpine
+    container_name: postgres-delivery-tracking-test
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tracking-test-db
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: "@KeyDev"
+    ports:
+      - "5488:5432"
+    volumes:
+      - postgres_delivery_tracking_test_data:/var/lib/postgresql/data
+    networks:
+      - delivery-network
   pgadmin:
     image: dpage/pgadmin4:9.5
     depends_on:
       - postgres-courier
       - postgres-delivery-tracking
+      - postgres-courier-test
+      - postgres-delivery-tracking-test
     environment:
       PGADMIN_DEFAULT_EMAIL: contato@delivery.com
       PGADMIN_DEFAULT_PASSWORD: barbosacode
@@ -44,6 +77,8 @@ services:
 volumes:
   postgres_courier_data:
   postgres_delivery_tracking_data:
+  postgres_courier_data_test:
+  postgres_delivery_tracking_test_data:
   pgadmin-data:
 networks:
   delivery-network:
