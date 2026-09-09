@@ -3,13 +3,11 @@ package com.barbosacode.delivery.msdelivery.tracking.domain.valueObject;
 import com.barbosacode.delivery.msdelivery.tracking.domain.exceptions.DomainException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Objects;
 
+@Getter
 @Builder
 @Embeddable
 @EqualsAndHashCode
