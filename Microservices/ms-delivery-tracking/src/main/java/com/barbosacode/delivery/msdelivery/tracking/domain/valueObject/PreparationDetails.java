@@ -1,6 +1,5 @@
-package com.barbosacode.delivery.msdelivery.tracking.domain.operations;
+package com.barbosacode.delivery.msdelivery.tracking.domain.valueObject;
 
-import com.barbosacode.delivery.msdelivery.tracking.domain.valueObject.ContactPoint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -1,0 +1,9 @@
+package com.barbosacode.delivery.mscourier.repository;
+
+import com.barbosacode.delivery.mscourier.domain.model.Courier;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.UUID;
+
+public interface CourierRepository extends JpaRepository<Courier, UUID> {
+}
