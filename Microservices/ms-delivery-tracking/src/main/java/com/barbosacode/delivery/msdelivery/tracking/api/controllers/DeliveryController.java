@@ -6,6 +6,7 @@ import com.barbosacode.delivery.msdelivery.tracking.domain.services.DeliveryServ
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -24,7 +25,7 @@ public class DeliveryController {
 
 
     @GetMapping
-    public ResponseEntity<Page<DeliveryResponse>> getDeliveries(Pageable pageable) {
+    public ResponseEntity<Page<DeliveryResponse>> getDeliveries(@PageableDefault Pageable pageable) {
         Page<DeliveryResponse> deliveries = deliveryService.getAll(pageable);
         return ResponseEntity.ok(deliveries);
     }
@@ -52,6 +53,12 @@ public class DeliveryController {
     ) {
         DeliveryResponse response = deliveryService.update(UUID.fromString(deliveryId), deliveryDraft);
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{deliveryId}")
+    public ResponseEntity<Void> delete(@PathVariable UUID deliveryId) {
+        deliveryService.delete(deliveryId);
+        return ResponseEntity.noContent().build();
     }
 }
 
