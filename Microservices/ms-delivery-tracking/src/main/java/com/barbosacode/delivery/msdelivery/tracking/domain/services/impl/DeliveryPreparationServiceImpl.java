@@ -5,7 +5,7 @@ import com.barbosacode.delivery.msdelivery.tracking.api.dto.response.DeliveryRes
 import com.barbosacode.delivery.msdelivery.tracking.domain.exceptions.DomainException;
 import com.barbosacode.delivery.msdelivery.tracking.domain.mappers.DeliveryMapper;
 import com.barbosacode.delivery.msdelivery.tracking.domain.model.Delivery;
-import com.barbosacode.delivery.msdelivery.tracking.domain.services.DeliveryService;
+import com.barbosacode.delivery.msdelivery.tracking.domain.services.DeliveryPreparationService;
 import com.barbosacode.delivery.msdelivery.tracking.domain.valueObject.PreparationDetails;
 import com.barbosacode.delivery.msdelivery.tracking.repository.DeliveryRepository;
 import jakarta.transaction.Transactional;
@@ -18,11 +18,11 @@ import java.time.Duration;
 import java.util.UUID;
 
 @Service
-public class DeliveryServiceImpl implements DeliveryService {
+public class DeliveryPreparationServiceImpl implements DeliveryPreparationService {
 
     private final DeliveryRepository deliveryRepository;
 
-    public DeliveryServiceImpl(DeliveryRepository deliveryRepository) {
+    public DeliveryPreparationServiceImpl(DeliveryRepository deliveryRepository) {
         this.deliveryRepository = deliveryRepository;
     }
 

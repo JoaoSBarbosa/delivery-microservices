@@ -1,6 +1,7 @@
 package com.barbosacode.delivery.msdelivery.tracking.api.exception;
 
 
+import com.barbosacode.delivery.msdelivery.tracking.domain.exceptions.DomainException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,4 +38,19 @@ public class ApiExceptionHandler {
                 .badRequest()
                 .body(apiError);
     }
+
+    @ExceptionHandler(DomainException.class)
+    public ResponseEntity<ApiError> handleDomainException(DomainException exception, HttpServletRequest request) {
+        ApiError apiError = new ApiError(
+                OffsetDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Erro de negócio",
+                exception.getMessage(),
+                request.getRequestURI(),
+                List.of()
+        );
+        return ResponseEntity.badRequest().body(apiError);
+    }
+
+
 }

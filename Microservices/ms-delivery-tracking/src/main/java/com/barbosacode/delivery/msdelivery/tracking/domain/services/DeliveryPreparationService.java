@@ -7,9 +7,10 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;
 
-public interface DeliveryService {
+public interface DeliveryPreparationService {
 
     DeliveryResponse draft(DeliveryRequest deliveryRequest);
+
 
     DeliveryResponse getById(UUID deliveryId);
 

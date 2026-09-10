@@ -1,8 +1,10 @@
 package com.barbosacode.delivery.msdelivery.tracking.api.controllers;
 
+import com.barbosacode.delivery.msdelivery.tracking.api.dto.request.DeliveryCourierRequest;
 import com.barbosacode.delivery.msdelivery.tracking.api.dto.request.DeliveryRequest;
 import com.barbosacode.delivery.msdelivery.tracking.api.dto.response.DeliveryResponse;
-import com.barbosacode.delivery.msdelivery.tracking.domain.services.DeliveryService;
+import com.barbosacode.delivery.msdelivery.tracking.domain.services.DeliveryCheckpointService;
+import com.barbosacode.delivery.msdelivery.tracking.domain.services.DeliveryPreparationService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,10 +19,12 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/deliveries")
 public class DeliveryController {
-    private final DeliveryService deliveryService;
+    private final DeliveryPreparationService deliveryService;
+    private final DeliveryCheckpointService deliveryCheckpointService;
 
-    public DeliveryController(DeliveryService deliveryService) {
+    public DeliveryController(DeliveryPreparationService deliveryService, DeliveryCheckpointService deliveryCheckpointService) {
         this.deliveryService = deliveryService;
+        this.deliveryCheckpointService = deliveryCheckpointService;
     }
 
 
@@ -44,6 +48,26 @@ public class DeliveryController {
                 .buildAndExpand(response.id())
                 .toUri();
         return ResponseEntity.created(uri).body(response);
+    }
+
+    @PostMapping("/{deliveryId}/pickups")
+    public ResponseEntity<DeliveryResponse> pickup(@PathVariable UUID deliveryId, @Valid @RequestBody DeliveryCourierRequest pickupRequest) {
+        DeliveryResponse response = deliveryCheckpointService.pickup(deliveryId, pickupRequest.getCourierId());
+        return ResponseEntity.ok(response);
+
+
+    }
+
+    @PostMapping("/{deliveryId}/placement")
+    public ResponseEntity<DeliveryResponse> place(@PathVariable UUID deliveryId) {
+        DeliveryResponse response = deliveryCheckpointService.place(deliveryId);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{deliveryId}/completion")
+    public ResponseEntity<DeliveryResponse> complete(@PathVariable UUID deliveryId) {
+        DeliveryResponse response = deliveryCheckpointService.complete(deliveryId);
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{deliveryId}")
