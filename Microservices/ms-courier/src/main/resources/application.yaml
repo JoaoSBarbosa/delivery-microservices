@@ -1,6 +1,8 @@
 spring:
   application:
     name: ms-courier
-
   profiles:
     active: dev
+
+server:
+  port: 8081

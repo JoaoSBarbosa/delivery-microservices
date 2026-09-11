@@ -67,4 +67,9 @@ public class Courier {
 
         setLastFullFilledDeliveryAt(OffsetDateTime.now());
     }
+
+    public void update(String name, String phoneNumber) {
+        setName(name);
+        setPhoneNumber(new PhoneNumber(phoneNumber));
+    }
 }

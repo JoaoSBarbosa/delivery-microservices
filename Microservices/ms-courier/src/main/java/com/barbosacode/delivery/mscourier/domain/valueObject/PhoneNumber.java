@@ -5,10 +5,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 import java.util.Objects;
 
 
+@Getter
 @Builder
 @Embeddable
 @EqualsAndHashCode

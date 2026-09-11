@@ -1,4 +1,4 @@
-package com.barbosacode.delivery.mscourier.repository;
+package com.barbosacode.delivery.mscourier.domain.repository;
 
 import com.barbosacode.delivery.mscourier.domain.model.Courier;
 import org.springframework.data.jpa.repository.JpaRepository;
