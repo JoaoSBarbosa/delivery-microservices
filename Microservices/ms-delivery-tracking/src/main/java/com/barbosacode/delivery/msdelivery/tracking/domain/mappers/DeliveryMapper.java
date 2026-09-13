@@ -2,6 +2,7 @@ package com.barbosacode.delivery.msdelivery.tracking.domain.mappers;
 
 import com.barbosacode.delivery.msdelivery.tracking.api.dto.request.ContactPointRequest;
 import com.barbosacode.delivery.msdelivery.tracking.api.dto.request.DeliveryRequest;
+import com.barbosacode.delivery.msdelivery.tracking.api.dto.request.ItemRequest;
 import com.barbosacode.delivery.msdelivery.tracking.api.dto.request.PhoneNumberRequest;
 import com.barbosacode.delivery.msdelivery.tracking.api.dto.response.ContactPointResponse;
 import com.barbosacode.delivery.msdelivery.tracking.api.dto.response.DeliveryResponse;
@@ -9,10 +10,9 @@ import com.barbosacode.delivery.msdelivery.tracking.api.dto.response.ItemRespons
 import com.barbosacode.delivery.msdelivery.tracking.api.dto.response.PhoneNumberResponse;
 import com.barbosacode.delivery.msdelivery.tracking.domain.model.Delivery;
 import com.barbosacode.delivery.msdelivery.tracking.domain.model.Item;
-import com.barbosacode.delivery.msdelivery.tracking.domain.valueObject.ContactPoint;
-import com.barbosacode.delivery.msdelivery.tracking.domain.valueObject.PhoneNumber;
-import com.barbosacode.delivery.msdelivery.tracking.domain.valueObject.PreparationDetails;
+import com.barbosacode.delivery.msdelivery.tracking.domain.valueObject.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public final class DeliveryMapper {
@@ -83,6 +83,31 @@ public final class DeliveryMapper {
         );
     }
 
+    public static PreparationDetails toPreparationDetails(ContactPoint sender,
+                                                          ContactPoint recipient,
+                                                          DeliveryEstimate estimate,
+                                                          BigDecimal courierPayout,
+                                                          BigDecimal distanceFee) {
+
+        return PreparationDetails.builder()
+                .sender(sender)
+                .recipient(recipient)
+                .distanceFee(distanceFee)
+                .courierPayout(courierPayout)
+                .expectedDeliveryTime(estimate.getEstimatedTime())
+                .build();
+    }
+
+    private static ItemResponse toItemResponse(Item item) {
+        return new ItemResponse(
+                item.getId(),
+                item.getName(),
+                item.getDescription(),
+                item.getQuantity()
+        );
+    }
+
+
     private static PhoneNumber toPhoneNumber(PhoneNumberRequest request) {
         return PhoneNumber.builder()
                 .value(request.getNumber())
@@ -95,12 +120,11 @@ public final class DeliveryMapper {
                 .toList();
     }
 
-    private static ItemResponse toItemResponse(Item item) {
-        return new ItemResponse(
-                item.getId(),
-                item.getName(),
-                item.getDescription(),
-                item.getQuantity()
-        );
+    public static List<ItemDraft> toItemDraftList(List<ItemRequest> itemRequests) {
+        return itemRequests.stream()
+                .map(request -> new ItemDraft(request.getName(), request.getQuantity(), request.getDescription()))
+                .toList();
     }
+
+
 }

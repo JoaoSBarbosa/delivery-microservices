@@ -3,9 +3,14 @@ package com.barbosacode.delivery.msdelivery.tracking.domain.services.impl;
 import com.barbosacode.delivery.msdelivery.tracking.api.dto.request.DeliveryRequest;
 import com.barbosacode.delivery.msdelivery.tracking.api.dto.response.DeliveryResponse;
 import com.barbosacode.delivery.msdelivery.tracking.domain.exceptions.DomainException;
+import com.barbosacode.delivery.msdelivery.tracking.domain.exceptions.DomainNotFoudException;
 import com.barbosacode.delivery.msdelivery.tracking.domain.mappers.DeliveryMapper;
 import com.barbosacode.delivery.msdelivery.tracking.domain.model.Delivery;
+import com.barbosacode.delivery.msdelivery.tracking.domain.services.CourierPayoutCalculationService;
 import com.barbosacode.delivery.msdelivery.tracking.domain.services.DeliveryPreparationService;
+import com.barbosacode.delivery.msdelivery.tracking.domain.services.DeliveryTimeEstimationService;
+import com.barbosacode.delivery.msdelivery.tracking.domain.valueObject.ContactPoint;
+import com.barbosacode.delivery.msdelivery.tracking.domain.valueObject.DeliveryEstimate;
 import com.barbosacode.delivery.msdelivery.tracking.domain.valueObject.PreparationDetails;
 import com.barbosacode.delivery.msdelivery.tracking.repository.DeliveryRepository;
 import jakarta.transaction.Transactional;
@@ -14,85 +19,96 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.Duration;
+import java.math.RoundingMode;
 import java.util.UUID;
 
 @Service
 public class DeliveryPreparationServiceImpl implements DeliveryPreparationService {
 
     private final DeliveryRepository deliveryRepository;
+    private final DeliveryTimeEstimationService deliveryTimeEstimationService;
+    private final CourierPayoutCalculationService courierPayoutCalculationService;
+    private final DeliveryFeeCalculationService deliveryFeeCalculationService;
 
-    public DeliveryPreparationServiceImpl(DeliveryRepository deliveryRepository) {
+    public DeliveryPreparationServiceImpl(
+            DeliveryRepository deliveryRepository,
+            DeliveryTimeEstimationService deliveryTimeEstimationService,
+            CourierPayoutCalculationService courierPayoutCalculationService,
+            DeliveryFeeCalculationService deliveryFeeCalculationService) {
         this.deliveryRepository = deliveryRepository;
+        this.deliveryTimeEstimationService = deliveryTimeEstimationService;
+        this.courierPayoutCalculationService = courierPayoutCalculationService;
+        this.deliveryFeeCalculationService = deliveryFeeCalculationService;
     }
 
     @Override
     @Transactional
     public DeliveryResponse draft(DeliveryRequest deliveryRequest) {
+        Delivery draftDelivery = Delivery.draft();
+        prepareDelivery(deliveryRequest, draftDelivery);
+        Delivery savedDelivery = deliveryRepository.saveAndFlush(draftDelivery);
+        return DeliveryMapper.toResponse(savedDelivery);
 
-        try {
-            Delivery draftDelivery = Delivery.draft();
-            handlePreparation(deliveryRequest, draftDelivery);
-
-            Delivery savedDelivery = deliveryRepository.saveAndFlush(draftDelivery);
-
-            return DeliveryMapper.toResponse(savedDelivery);
-        } catch (Exception ex) {
-            throw new DomainException(ex.getMessage());
-        }
-    }
-
-
-    @Override
-    public DeliveryResponse getById(UUID deliveryId) {
-
-        validateDeliveryId(deliveryId);
-        Delivery deliver = deliveryRepository.findById(deliveryId).orElseThrow(() -> new DomainException("Entrega de ID " + deliveryId + " não encontrado."));
-        return DeliveryMapper.toResponse(deliver);
     }
 
     @Override
     public DeliveryResponse update(UUID deliveryId, DeliveryRequest deliveryRequest) {
-        validateDeliveryId(deliveryId);
-        Delivery delivery = deliveryRepository.findById(deliveryId).orElseThrow(() -> new DomainException("Entrega de ID " + deliveryId + " não encontrado."));
-        handlePreparation(deliveryRequest, delivery);
-        return DeliveryMapper.toResponse(deliveryRepository.saveAndFlush(delivery));
+
+        Delivery delivery = findDelivery(deliveryId);
+        prepareDelivery(deliveryRequest, delivery);
+        Delivery updateDelivery = deliveryRepository.save(delivery);
+
+        return DeliveryMapper.toResponse(updateDelivery);
     }
 
     @Override
-    public void delete(UUID deliveryId) {
-        validateDeliveryId(deliveryId);
+    public DeliveryResponse getById(UUID deliveryId) {
+        Delivery delivery = findDelivery(deliveryId);
 
-        Delivery delivery = deliveryRepository.findById(deliveryId).orElseThrow(() -> new DomainException("Entrega de ID " + deliveryId + " não encontrado."));
+        return DeliveryMapper.toResponse(delivery);
+    }
+
+
+    @Override
+    public void delete(UUID deliveryId) {
+        Delivery delivery = findDelivery(deliveryId);
         deliveryRepository.delete(delivery);
     }
 
     @Override
     public Page<DeliveryResponse> getAll(Pageable pageable) {
 
-        Page<Delivery> deliveries = deliveryRepository.findAll(pageable);
-
-        return deliveries.map(DeliveryMapper::toResponse);
+        return deliveryRepository.findAll(pageable).map(DeliveryMapper::toResponse);
     }
 
-    private void handlePreparation(DeliveryRequest deliveryRequest, Delivery delivery) {
-        if (deliveryRequest.getSender() == null) throw new DomainException("O remetente não pode ser nulo");
-        if (deliveryRequest.getRecipient() == null) throw new DomainException("O destinatário não pode ser nulo");
-        if (deliveryRequest.getItems() == null || deliveryRequest.getItems().isEmpty())
-            throw new DomainException("A lista de itens não pode ser nula ou vazia");
 
-        PreparationDetails details = PreparationDetails.builder()
-                .sender(DeliveryMapper.toContactPoint(deliveryRequest.getSender()))
-                .recipient(DeliveryMapper.toContactPoint(deliveryRequest.getRecipient()))
-                .distanceFee(new BigDecimal("15.0"))
-                .courierPayout(new BigDecimal("100.0"))
-                .expectedDeliveryTime(Duration.ofHours(3))
-                .build();
+    private Delivery findDelivery(UUID deliveryId) {
+        validateDeliveryId(deliveryId);
+        return deliveryRepository.findById(deliveryId).orElseThrow(() -> new DomainNotFoudException("Entrega de ID " + deliveryId + " não encontrada."));
+    }
+
+    private void prepareDelivery(DeliveryRequest deliveryRequest, Delivery delivery) {
+
+        ContactPoint sender = DeliveryMapper.toContactPoint(deliveryRequest.getSender());
+        ContactPoint recipient = DeliveryMapper.toContactPoint(deliveryRequest.getRecipient());
+
+        DeliveryEstimate estimate = deliveryTimeEstimationService.estimate(sender, recipient);
+        BigDecimal courierPayout = courierPayoutCalculationService.calculatePayout(estimate.getDistanceInKm());
+        BigDecimal distanceFee = deliveryFeeCalculationService.calculateFee(estimate.getDistanceInKm());
+
+        PreparationDetails details = DeliveryMapper.toPreparationDetails(sender, recipient, estimate, courierPayout, distanceFee);
+
+
         delivery.editPreparationDetails(details);
-        delivery.clearItems();
-        for (var item : deliveryRequest.getItems())
-            delivery.addItem(item.getName(), item.getQuantity(), item.getDescription());
 
+
+        delivery.replaceItems(DeliveryMapper.toItemDraftList(deliveryRequest.getItems()));
+        
+
+    }
+
+    private BigDecimal calculateFee(Double distanceInKm) {
+        return new BigDecimal("3").multiply(new BigDecimal(distanceInKm)).setScale(2, RoundingMode.HALF_EVEN);
     }
 
     private void validateDeliveryId(UUID deliveryId) {

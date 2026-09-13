@@ -3,6 +3,7 @@ package com.barbosacode.delivery.msdelivery.tracking.domain.model;
 import com.barbosacode.delivery.msdelivery.tracking.domain.enums.DeliveryStatus;
 import com.barbosacode.delivery.msdelivery.tracking.domain.exceptions.DomainException;
 import com.barbosacode.delivery.msdelivery.tracking.domain.valueObject.ContactPoint;
+import com.barbosacode.delivery.msdelivery.tracking.domain.valueObject.ItemDraft;
 import com.barbosacode.delivery.msdelivery.tracking.domain.valueObject.PreparationDetails;
 import jakarta.persistence.*;
 import lombok.*;
@@ -108,6 +109,12 @@ public class Delivery {
     public void clearItems() {
         items.clear();
         calculateToTotalItems();
+    }
+
+    public void replaceItems(List<ItemDraft> items) {
+        this.clearItems();
+
+        items.forEach(item -> this.addItem(item.name(), item.quantity(), item.description()));
     }
 
     public void changeItemQuantity(UUID itemId, int quantity) {
