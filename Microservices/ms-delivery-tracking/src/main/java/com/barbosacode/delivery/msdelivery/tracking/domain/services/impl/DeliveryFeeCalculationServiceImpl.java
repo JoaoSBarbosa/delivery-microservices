@@ -1,7 +1,7 @@
-package com.barbosacode.delivery.msdelivery.tracking.domain.services;
+package com.barbosacode.delivery.msdelivery.tracking.domain.services.impl;
 
 
-import com.barbosacode.delivery.msdelivery.tracking.domain.services.impl.DeliveryFeeCalculationService;
+import com.barbosacode.delivery.msdelivery.tracking.domain.services.DeliveryFeeCalculationService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

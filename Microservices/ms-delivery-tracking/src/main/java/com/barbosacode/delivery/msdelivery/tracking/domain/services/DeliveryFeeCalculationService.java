@@ -1,4 +1,4 @@
-package com.barbosacode.delivery.msdelivery.tracking.domain.services.impl;
+package com.barbosacode.delivery.msdelivery.tracking.domain.services;
 
 import java.math.BigDecimal;
 
