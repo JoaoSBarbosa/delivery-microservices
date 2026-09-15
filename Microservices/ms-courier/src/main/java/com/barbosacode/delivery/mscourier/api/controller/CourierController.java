@@ -1,7 +1,10 @@
 package com.barbosacode.delivery.mscourier.api.controller;
 
+import com.barbosacode.delivery.mscourier.api.dto.request.CourierPayoutRequest;
 import com.barbosacode.delivery.mscourier.api.dto.request.CourierRequest;
+import com.barbosacode.delivery.mscourier.api.dto.response.CourierPayoutResponse;
 import com.barbosacode.delivery.mscourier.api.dto.response.CourierResponse;
+import com.barbosacode.delivery.mscourier.domain.services.CourierPayoutService;
 import com.barbosacode.delivery.mscourier.domain.services.CourierRegistrationService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -19,9 +22,11 @@ import java.util.UUID;
 public class CourierController {
 
     private final CourierRegistrationService courierRegistrationService;
+    private final CourierPayoutService courierPayoutService;
 
-    public CourierController(CourierRegistrationService courierRegistrationService) {
+    public CourierController(CourierRegistrationService courierRegistrationService, CourierPayoutService courierPayoutService) {
         this.courierRegistrationService = courierRegistrationService;
+        this.courierPayoutService = courierPayoutService;
     }
 
     @GetMapping
@@ -55,5 +60,12 @@ public class CourierController {
     public ResponseEntity<Void> delete(@PathVariable UUID courierId) {
         courierRegistrationService.delete(courierId);
         return ResponseEntity.noContent().build();
+    }
+
+
+    @PostMapping("/payout-calculation")
+    public ResponseEntity<CourierPayoutResponse> calculate(@RequestBody CourierPayoutRequest request) {
+        CourierPayoutResponse payoutFee = courierPayoutService.calculate(request);
+        return ResponseEntity.ok(payoutFee);
     }
 }
