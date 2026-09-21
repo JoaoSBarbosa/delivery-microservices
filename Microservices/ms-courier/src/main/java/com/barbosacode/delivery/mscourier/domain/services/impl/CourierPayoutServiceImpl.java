@@ -1,8 +1,8 @@
 package com.barbosacode.delivery.mscourier.domain.services.impl;
 
-import com.barbosacode.delivery.mscourier.api.dto.request.CourierPayoutRequest;
-import com.barbosacode.delivery.mscourier.api.dto.response.CourierPayoutResponse;
 import com.barbosacode.delivery.mscourier.domain.services.CourierPayoutService;
+import com.barbosacode.delivery.mscourier.integration.dto.request.CourierPayoutRequest;
+import com.barbosacode.delivery.mscourier.integration.dto.response.CourierPayoutResponse;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

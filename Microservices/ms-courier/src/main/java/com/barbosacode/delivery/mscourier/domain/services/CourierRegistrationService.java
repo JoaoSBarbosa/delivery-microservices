@@ -1,7 +1,7 @@
 package com.barbosacode.delivery.mscourier.domain.services;
 
-import com.barbosacode.delivery.mscourier.api.dto.request.CourierRequest;
-import com.barbosacode.delivery.mscourier.api.dto.response.CourierResponse;
+import com.barbosacode.delivery.mscourier.integration.dto.request.CourierRequest;
+import com.barbosacode.delivery.mscourier.integration.dto.response.CourierResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

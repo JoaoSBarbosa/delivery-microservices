@@ -1,13 +1,13 @@
 package com.barbosacode.delivery.mscourier.domain.services.impl;
 
-import com.barbosacode.delivery.mscourier.api.dto.request.CourierRequest;
-import com.barbosacode.delivery.mscourier.api.dto.response.CourierResponse;
 import com.barbosacode.delivery.mscourier.domain.exceptions.CourierNotFoundException;
 import com.barbosacode.delivery.mscourier.domain.exceptions.DomainException;
 import com.barbosacode.delivery.mscourier.domain.mappers.CourierMapper;
 import com.barbosacode.delivery.mscourier.domain.model.Courier;
 import com.barbosacode.delivery.mscourier.domain.repository.CourierRepository;
 import com.barbosacode.delivery.mscourier.domain.services.CourierRegistrationService;
+import com.barbosacode.delivery.mscourier.integration.dto.request.CourierRequest;
+import com.barbosacode.delivery.mscourier.integration.dto.response.CourierResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

@@ -1,0 +1,15 @@
+spring:
+
+  datasource:
+    url: jdbc:postgresql://localhost:5485/courier-db-test
+    username: root
+    password: "@KeyDev"
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+  flyway:
+    enabled: false

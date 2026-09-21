@@ -1,9 +1,9 @@
 package com.barbosacode.delivery.mscourier.domain.mappers;
 
-import com.barbosacode.delivery.mscourier.api.dto.response.AssignedDeliveryResponse;
-import com.barbosacode.delivery.mscourier.api.dto.response.CourierResponse;
 import com.barbosacode.delivery.mscourier.domain.model.AssignedDelivery;
 import com.barbosacode.delivery.mscourier.domain.model.Courier;
+import com.barbosacode.delivery.mscourier.integration.dto.response.AssignedDeliveryResponse;
+import com.barbosacode.delivery.mscourier.integration.dto.response.CourierResponse;
 
 import java.util.List;
 

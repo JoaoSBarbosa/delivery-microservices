@@ -1,4 +1,4 @@
-package com.barbosacode.delivery.mscourier.api.exception;
+package com.barbosacode.delivery.mscourier.integration.exception;
 
 
 import com.barbosacode.delivery.mscourier.domain.exceptions.CourierNotFoundException;

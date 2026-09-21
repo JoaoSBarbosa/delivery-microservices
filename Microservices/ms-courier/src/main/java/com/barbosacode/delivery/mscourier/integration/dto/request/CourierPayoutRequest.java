@@ -1,4 +1,4 @@
-package com.barbosacode.delivery.mscourier.api.dto.request;
+package com.barbosacode.delivery.mscourier.integration.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

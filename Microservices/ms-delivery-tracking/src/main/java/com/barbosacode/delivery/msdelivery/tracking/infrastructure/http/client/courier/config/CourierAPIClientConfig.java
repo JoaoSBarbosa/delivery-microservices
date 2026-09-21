@@ -1,5 +1,6 @@
-package com.barbosacode.delivery.msdelivery.tracking.infrastructure.http.client.courier;
+package com.barbosacode.delivery.msdelivery.tracking.infrastructure.http.client.courier.config;
 
+import com.barbosacode.delivery.msdelivery.tracking.infrastructure.http.client.courier.CourierAPIClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

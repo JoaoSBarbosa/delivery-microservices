@@ -1,11 +1,11 @@
-package com.barbosacode.delivery.mscourier.api.controller;
+package com.barbosacode.delivery.mscourier.integration.controller;
 
-import com.barbosacode.delivery.mscourier.api.dto.request.CourierPayoutRequest;
-import com.barbosacode.delivery.mscourier.api.dto.request.CourierRequest;
-import com.barbosacode.delivery.mscourier.api.dto.response.CourierPayoutResponse;
-import com.barbosacode.delivery.mscourier.api.dto.response.CourierResponse;
 import com.barbosacode.delivery.mscourier.domain.services.CourierPayoutService;
 import com.barbosacode.delivery.mscourier.domain.services.CourierRegistrationService;
+import com.barbosacode.delivery.mscourier.integration.dto.request.CourierPayoutRequest;
+import com.barbosacode.delivery.mscourier.integration.dto.request.CourierRequest;
+import com.barbosacode.delivery.mscourier.integration.dto.response.CourierPayoutResponse;
+import com.barbosacode.delivery.mscourier.integration.dto.response.CourierResponse;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

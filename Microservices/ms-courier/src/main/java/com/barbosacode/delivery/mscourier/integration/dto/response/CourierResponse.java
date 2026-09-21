@@ -1,4 +1,4 @@
-package com.barbosacode.delivery.mscourier.api.dto.response;
+package com.barbosacode.delivery.mscourier.integration.dto.response;
 
 
 import java.time.OffsetDateTime;
