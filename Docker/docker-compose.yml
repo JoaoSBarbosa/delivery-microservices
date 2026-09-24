@@ -29,7 +29,6 @@ services:
     networks:
       - delivery-network
 
-
   postgres-delivery-tracking:
     image: postgres:16-alpine
     container_name: postgres-delivery-tracking
@@ -59,11 +58,81 @@ services:
       - postgres_delivery_tracking_test_data:/var/lib/postgresql/data
     networks:
       - delivery-network
+
+  kafka:
+    image: apache/kafka:4.0.0
+    container_name: kafka
+    restart: unless-stopped
+    ports:
+      - 9092:9092
+    environment:
+      #      Identificador unico do broker dentro do cluster kafka
+      #      Como este ambiente possui apenas um broker, utiliza o ID 0
+      KAFKA_NODE_ID: 0
+      # Define as funções exercidas pelo nó.
+      # "broker" => recebe e armazena mensagens.
+      # "controller" => participa do gerenciamento do cluster via KRaft.
+      # Como temos apenas um nó, o mesmo processo exerce as duas funções.
+      KAFKA_PROCESS_ROLES: controller,broker
+      # Define os listeners nos quais o Kafka aceita conexões.
+      #
+      # 9090 (PLAINTEXT):
+      # Comunicação entre containers da rede Docker.
+      # Ex.: Kafka UI e aplicações dentro do Docker usam kafka:9090.
+      #
+      # 9091 (CONTROLLER):
+      # Comunicação interna utilizada pelo KRaft para o controller.
+      #
+      # 9092 (EXTERNAL):
+      # Listener para clientes executando fora do Docker.
+      KAFKA_LISTENERS: PLAINTEXT://:9090,CONTROLLER://:9091,EXTERNAL://:9092
+
+      # Endereços que o Kafka publicado aos clientes para que eles possam
+      # estabelecer a conexão depois de receberem os metadados do cluster.
+      #
+      # Dentro do Docker: kafka:9090
+      # Fora do Docker: localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9090,EXTERNAL://localhost:9092
+
+      # Associa cada listener ao protocolo de segurança utilizado.
+      # Neste ambiente de desenvolvimento todos utilizam PLAINTEXT, ou seja, sem autenticação e sem criptografia.
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+
+      # Define os controllers que participam do quorum do KRaft.
+      # O formato é: nodeId@host:port
+      #
+      # Como temos apenas um controller: node 0 -> kafka:9091
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 0@kafka:9091
+
+      # Indica qual listener será utilizado para a comunicação entre os controllers do KRaft.
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+
+      # Define o fator de replicação do tópico interno de offsets.
+      # Como este ambiente possui apenas um broker, o valor deve ser 1.
+      #
+      # Em um cluster com múltiplos brokers, esse valor normalmente seria
+      # aumentado para permitir replicação e tolerância à falha.
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    volumes:
+      - kafka-data:/apache/kafka
+    networks:
+      - delivery-network
+  kafka-ui:
+    image: provectuslabs/kafka-ui:v0.7.2
+    restart: unless-stopped
+    ports:
+      - 8084:8080
+    environment:
+      KAFKA_CLUSTERS_0_NAME: barbosadelivery-kafka-cluster
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9090
+    networks:
+      - delivery-network
 volumes:
   postgres_courier_data:
   postgres_delivery_tracking_data:
   postgres_courier_data_test:
   postgres_delivery_tracking_test_data:
+  kafka-data:
 networks:
   delivery-network:
     driver: bridge

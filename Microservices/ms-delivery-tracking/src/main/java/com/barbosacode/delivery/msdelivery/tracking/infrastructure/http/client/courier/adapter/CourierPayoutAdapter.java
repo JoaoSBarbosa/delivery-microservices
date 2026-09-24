@@ -1,6 +1,6 @@
 package com.barbosacode.delivery.msdelivery.tracking.infrastructure.http.client.courier.adapter;
 
-import com.barbosacode.delivery.msdelivery.tracking.domain.ports.CourierPayoutPort;
+import com.barbosacode.delivery.msdelivery.tracking.domain.ports.out.CourierCompensationCalculator;
 import com.barbosacode.delivery.msdelivery.tracking.infrastructure.http.client.courier.CourierAPIClient;
 import com.barbosacode.delivery.msdelivery.tracking.infrastructure.http.client.courier.dto.CourierPayoutRequest;
 import com.barbosacode.delivery.msdelivery.tracking.infrastructure.http.client.courier.dto.CourierPayoutResponse;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 
 @Component
-public class CourierPayoutAdapter implements CourierPayoutPort {
+public class CourierPayoutAdapter implements CourierCompensationCalculator {
 
     private final CourierAPIClient apiClient;
 
