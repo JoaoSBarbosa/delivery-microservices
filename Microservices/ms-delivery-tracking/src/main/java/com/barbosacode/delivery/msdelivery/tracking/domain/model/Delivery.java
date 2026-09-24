@@ -1,12 +1,16 @@
 package com.barbosacode.delivery.msdelivery.tracking.domain.model;
 
 import com.barbosacode.delivery.msdelivery.tracking.domain.enums.DeliveryStatus;
+import com.barbosacode.delivery.msdelivery.tracking.domain.events.DeliveryFulfilledEvent;
+import com.barbosacode.delivery.msdelivery.tracking.domain.events.DeliveryPickupEvent;
+import com.barbosacode.delivery.msdelivery.tracking.domain.events.DeliveryPlacedEvent;
 import com.barbosacode.delivery.msdelivery.tracking.domain.exceptions.DomainException;
 import com.barbosacode.delivery.msdelivery.tracking.domain.valueObject.ContactPoint;
 import com.barbosacode.delivery.msdelivery.tracking.domain.valueObject.ItemDraft;
 import com.barbosacode.delivery.msdelivery.tracking.domain.valueObject.PreparationDetails;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -20,8 +24,8 @@ import java.util.UUID;
 @Getter
 @Setter(AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Delivery {
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
+public class Delivery extends AbstractAggregateRoot<Delivery> {
 
     @Id
     @EqualsAndHashCode.Include
@@ -70,6 +74,10 @@ public class Delivery {
     @OneToMany(mappedBy = "delivery", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Item> items = new ArrayList<>();
 
+    public List<Item> getItems() {
+        return Collections.unmodifiableList(this.items);
+    }
+
 
     public static Delivery draft() {
         Delivery delivery = new Delivery();
@@ -81,10 +89,6 @@ public class Delivery {
         delivery.setCourierPayout(BigDecimal.ZERO);
         delivery.setTotalItems(0);
         return delivery;
-    }
-
-    public List<Item> getItems() {
-        return Collections.unmodifiableList(this.items);
     }
 
 
@@ -138,17 +142,22 @@ public class Delivery {
         verifyCanBePlaced();
         changeStatusTo(DeliveryStatus.WAITING_FOR_COURIER);
         this.setPlacedAt(OffsetDateTime.now());
+        super.registerEvent(new DeliveryPlacedEvent(this.getPlacedAt(), this.getId()));
     }
 
     public void pickUp(UUID courierId) {
         changeStatusTo(DeliveryStatus.IN_TRANSIT);
         this.setCourierId(courierId);
         this.setAssignedAt(OffsetDateTime.now());
+
+        super.registerEvent(new DeliveryPickupEvent(this.getAssignedAt(), this.getId()));
     }
 
     public void markAsDelivery() {
         changeStatusTo(DeliveryStatus.DELIVERED);
         this.setFulfilledAt(OffsetDateTime.now());
+
+        super.registerEvent(new DeliveryFulfilledEvent(this.getFulfilledAt(), this.getId()));
     }
 
     private void changeStatusTo(DeliveryStatus newStatus) {
