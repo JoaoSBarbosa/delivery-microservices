@@ -2,7 +2,7 @@ package com.barbosacode.delivery.msdelivery.tracking.domain.model;
 
 import com.barbosacode.delivery.msdelivery.tracking.domain.enums.DeliveryStatus;
 import com.barbosacode.delivery.msdelivery.tracking.domain.events.DeliveryFulfilledEvent;
-import com.barbosacode.delivery.msdelivery.tracking.domain.events.DeliveryPickupEvent;
+import com.barbosacode.delivery.msdelivery.tracking.domain.events.DeliveryPickedUpEvent;
 import com.barbosacode.delivery.msdelivery.tracking.domain.events.DeliveryPlacedEvent;
 import com.barbosacode.delivery.msdelivery.tracking.domain.exceptions.DomainException;
 import com.barbosacode.delivery.msdelivery.tracking.domain.valueObject.ContactPoint;
@@ -142,7 +142,17 @@ public class Delivery extends AbstractAggregateRoot<Delivery> {
         verifyCanBePlaced();
         changeStatusTo(DeliveryStatus.WAITING_FOR_COURIER);
         this.setPlacedAt(OffsetDateTime.now());
-        super.registerEvent(new DeliveryPlacedEvent(this.getPlacedAt(), this.getId()));
+        super.registerEvent(
+                new DeliveryPlacedEvent(
+                        this.getId(),
+                        this.getPlacedAt(),
+                        this.getSender(),
+                        this.getRecipient(),
+                        this.getDistanceFee(),
+                        this.getCourierPayout(),
+                        this.getTotalCost(),
+                        this.getTotalItems()
+                ));
     }
 
     public void pickUp(UUID courierId) {
@@ -150,14 +160,26 @@ public class Delivery extends AbstractAggregateRoot<Delivery> {
         this.setCourierId(courierId);
         this.setAssignedAt(OffsetDateTime.now());
 
-        super.registerEvent(new DeliveryPickupEvent(this.getAssignedAt(), this.getId()));
+        super.registerEvent(
+                new DeliveryPickedUpEvent(
+                        this.getId(),
+                        courierId,
+                        this.getAssignedAt()
+                )
+        );
     }
 
     public void markAsDelivery() {
         changeStatusTo(DeliveryStatus.DELIVERED);
         this.setFulfilledAt(OffsetDateTime.now());
 
-        super.registerEvent(new DeliveryFulfilledEvent(this.getFulfilledAt(), this.getId()));
+        super.registerEvent(
+                new DeliveryFulfilledEvent(
+                        this.getId(),
+                        this.getCourierId(),
+                        this.getFulfilledAt()
+                )
+        );
     }
 
     private void changeStatusTo(DeliveryStatus newStatus) {
